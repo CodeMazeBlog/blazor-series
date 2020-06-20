@@ -1,7 +1,13 @@
 ﻿@page "/"
 @using BlazorProducts.Client.Components 
 
-<Home Title="Welcome to the BlazorProducts.Client application." @attributes="AdditionalAttributes"></Home>
+    <Home Title="Welcome to the BlazorProducts.Client application." @attributes="AdditionalAttributes">
+        <VisitShopContent>
+            Feel free to
+            <a href="https://www.redbubble.com/people/vpecanac/works/44764889-code-maze-merch?asc=u" target="_blank">visit our shop</a>
+            any time you want.
+        </VisitShopContent>
+    </Home>
 
 @code{
     public Dictionary<string, object> AdditionalAttributes { get; set; } = new Dictionary<string, object>

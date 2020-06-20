@@ -3,23 +3,10 @@
         @Title
     </h1>
     <p>
-        Feel free to 
-        <a href="https://www.redbubble.com/people/vpecanac/works/44764889-code-maze-merch?asc=u" target="_blank">visit our shop</a>
-        any time you want.
+        @VisitShopContent
     </p>
     <p>
         <img @attributes="AdditionalAttributes" class="img-fluid" />
     </p>
     
 </div>
-
-@code {
-    [Parameter]
-    public string Title { get; set; }
-
-    [Parameter(CaptureUnmatchedValues = true)]
-    public Dictionary<string, object> AdditionalAttributes { get; set; }
-
-    [CascadingParameter]
-    public string Color { get; set; }
-}
