@@ -1,0 +1,19 @@
+﻿@page "/products"
+@using BlazorProducts.Client.Components.ProductTable
+
+<div class="row">
+    <div class="col-md-10">
+        @*Place for search and sort*@
+    </div>
+    <div class="col-md-2">
+        <a href="/createProduct">Create Product</a>
+    </div>
+</div>
+<div class="row">
+    <ProductTable Products="ProductList" />
+</div>
+<div class="row">
+    <div class="col">
+        @*Place for pagination*@
+    </div>
+</div>

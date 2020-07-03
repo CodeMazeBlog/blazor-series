@@ -1,0 +1,21 @@
+﻿@page "/404"
+
+<div class="card customNotFound">
+    <div class="card-body">
+        <div class="row">
+            <div class="col">
+                We are sorry, but we couldn't find the page you are looking for!!!
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col text-md-center m-5 text-primary">
+        <button type="button" class="btn btn-primary" @onclick="NavigateToHome">Navigate to the Home Page</button>
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+        If you want, you can report this error by clicking the following link: <a href="/reportError/404/The page is missing">Report an error</a>
+    </div>
+</div>
