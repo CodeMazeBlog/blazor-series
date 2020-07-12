@@ -1,11 +1,9 @@
 ﻿using BlazorProducts.Server.Context;
 using BlazorProducts.Server.Paging;
+using BlazorProducts.Server.Repository.RepositoryExtensions;
 using Entities.Models;
 using Entities.RequestParameters;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace BlazorProducts.Server.Repository
@@ -21,7 +19,9 @@ namespace BlazorProducts.Server.Repository
 
         public async Task<PagedList<Product>> GetProducts(ProductParameters productParameters)
         {
-            var products = await _context.Products.ToListAsync();
+            var products = await _context.Products
+                .Search(productParameters.SearchTerm)
+                .ToListAsync();
 
             return PagedList<Product>
                 .ToPagedList(products, productParameters.PageNumber, productParameters.PageSize);
