@@ -21,6 +21,7 @@ namespace BlazorProducts.Server.Repository
         {
             var products = await _context.Products
                 .Search(productParameters.SearchTerm)
+                .Sort(productParameters.OrderBy)
                 .ToListAsync();
 
             return PagedList<Product>

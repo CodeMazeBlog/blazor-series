@@ -26,7 +26,8 @@ namespace BlazorProducts.Client.HttpRepository
             var queryStringParam = new Dictionary<string, string>
             {
                 ["pageNumber"] = productParameters.PageNumber.ToString(),
-                ["searchTerm"] = productParameters.SearchTerm == null ? "" : productParameters.SearchTerm
+                ["searchTerm"] = productParameters.SearchTerm == null ? "" : productParameters.SearchTerm,
+                ["orderBy"] = productParameters.OrderBy
             };
 
             var response = await _client.GetAsync(QueryHelpers.AddQueryString("https://localhost:5011/api/products", queryStringParam));
