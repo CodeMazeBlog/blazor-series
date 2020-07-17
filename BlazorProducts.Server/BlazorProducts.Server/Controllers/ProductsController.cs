@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using BlazorProducts.Server.Repository;
+using Entities.Models;
 using Entities.RequestParameters;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -17,7 +18,7 @@ namespace BlazorProducts.Server.Controllers
             _repo = repo;
         }
 
-		[HttpGet]
+        [HttpGet]
         public async Task<IActionResult> Get([FromQuery] ProductParameters productParameters)
         {
             var products = await _repo.GetProducts(productParameters);
@@ -25,6 +26,17 @@ namespace BlazorProducts.Server.Controllers
             Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(products.MetaData));
 
             return Ok(products);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateProduct([FromBody] Product product)
+        {
+            if (product == null)
+                return BadRequest();
+
+            await _repo.CreateProduct(product);
+
+            return Created("", product);
         }
     }
 }

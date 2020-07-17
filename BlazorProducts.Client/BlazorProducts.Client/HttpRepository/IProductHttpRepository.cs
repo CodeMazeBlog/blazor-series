@@ -11,5 +11,6 @@ namespace BlazorProducts.Client.HttpRepository
     public interface IProductHttpRepository
     {
         Task<PagingResponse<Product>> GetProducts(ProductParameters productParameters);
+        Task CreateProduct(Product product);
     }
 }

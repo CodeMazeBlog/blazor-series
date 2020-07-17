@@ -27,5 +27,11 @@ namespace BlazorProducts.Server.Repository
             return PagedList<Product>
                 .ToPagedList(products, productParameters.PageNumber, productParameters.PageSize);
         }
+
+        public async Task CreateProduct(Product product)
+        {
+            _context.Add(product);
+            await _context.SaveChangesAsync();
+        }
     }
 }

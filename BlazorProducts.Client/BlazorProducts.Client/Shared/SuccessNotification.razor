@@ -1,0 +1,23 @@
+﻿<div class="modal @_modalClass" tabindex="-1" role="dialog" style="display:@_modalDisplay">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Success</h5>
+                <button type="button" class="close" @onclick="Hide" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Action completed successfully.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" data-dismiss="modal" @onclick="Hide">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (_showBackdrop)
+{
+    <div class="modal-backdrop fade show"></div>
+}

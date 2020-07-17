@@ -1,3 +1,3 @@
-# blazor-series - Sorting in Blazor WebAssembly and ASP.NET Core Web API 
-## https://code-maze.com/blazor-webassembly-sorting
+# blazor-series - Sorting in Blazor WebAssembly Forms and Form Validation
+## https://code-maze.com/blazor-webassembly-forms-form-validation
 This repository contains the source code for the "Blazor WebAssembly Series" on Code Maze blog
