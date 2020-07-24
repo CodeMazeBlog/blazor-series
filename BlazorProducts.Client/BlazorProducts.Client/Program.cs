@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using System.Net.Http;
 using BlazorProducts.Client.HttpRepository;
+using Blazor.FileReader;
 
 namespace BlazorProducts.Client
 {
@@ -18,6 +19,7 @@ namespace BlazorProducts.Client
 
             builder.Services.AddTransient(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
             builder.Services.AddScoped<IProductHttpRepository, ProductHttpRepository>();
+            builder.Services.AddFileReaderService(o => o.UseWasmSharedBuffer = true);
 
             await builder.Build().RunAsync();
         }

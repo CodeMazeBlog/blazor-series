@@ -22,5 +22,7 @@ namespace BlazorProducts.Client.Pages
             await ProductRepo.CreateProduct(_product);
             _notification.Show();
         }
+
+        private void AssignImageUrl(string imgUrl) => _product.ImageUrl = imgUrl;
     }
 }
