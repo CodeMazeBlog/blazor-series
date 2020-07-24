@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using System.Net.Http;
 using BlazorProducts.Client.HttpRepository;
-using Blazor.FileReader;
+using Tewr.Blazor.FileReader;
 
 namespace BlazorProducts.Client
 {

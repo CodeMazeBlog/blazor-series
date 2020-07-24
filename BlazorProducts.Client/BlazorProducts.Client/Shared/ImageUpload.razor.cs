@@ -1,11 +1,10 @@
 ﻿using Microsoft.AspNetCore.Components;
 using System;
 using System.Threading.Tasks;
-using Blazor.FileReader;
-using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using BlazorProducts.Client.HttpRepository;
+using Tewr.Blazor.FileReader;
 
 namespace BlazorProducts.Client.Shared
 {
