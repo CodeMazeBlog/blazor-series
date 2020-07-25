@@ -28,10 +28,10 @@
                         $@product.Price
                     </td>
                     <td class="align-middle">
-                        <button type="button" class="btn btn-info">Update</button>
+                        <button type="button" class="btn btn-info" @onclick="() => RedirectToUpdate(product.Id)">Update</button>
                     </td>
                     <td class="align-middle">
-                        <button type="button" class="btn btn-danger">Delete</button>
+                        <button type="button" class="btn btn-danger" @onclick="() => Delete(product.Id)">Delete</button>
                     </td>
                 </tr>
              }
