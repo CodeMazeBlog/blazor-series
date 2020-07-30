@@ -1,6 +1,8 @@
 ﻿@page "/products"
 @using BlazorProducts.Client.Components.ProductTable
 @using BlazorProducts.Client.Components
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize]
 
 <div class="row">
     <div class="col-md-5">
