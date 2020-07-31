@@ -15,7 +15,7 @@ namespace BlazorProducts.Client.AuthProviders
                 new Claim(ClaimTypes.Name, "John Doe"),
                 new Claim(ClaimTypes.Role, "Administrator")
             };
-            var anonymous = new ClaimsIdentity(claims, "testAuthType");
+            var anonymous = new ClaimsIdentity();
             return await Task.FromResult(new AuthenticationState(new ClaimsPrincipal(anonymous)));
         }
     }
