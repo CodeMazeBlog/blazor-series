@@ -2,9 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using BlazorProducts.Server.Context;
 using BlazorProducts.Server.Repository;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -17,6 +19,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 
 namespace BlazorProducts.Server
 {
@@ -47,6 +50,26 @@ namespace BlazorProducts.Server
 
             services.AddIdentity<IdentityUser, IdentityRole>()
                 .AddEntityFrameworkStores<ProductContext>();
+
+            var jwtSettings = Configuration.GetSection("JwtSettings"); 
+            services.AddAuthentication(opt => 
+            { 
+                opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme; 
+                opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme; 
+            }).AddJwtBearer(options => 
+            { 
+                options.TokenValidationParameters = new TokenValidationParameters 
+                { 
+                    ValidateIssuer = true, 
+                    ValidateAudience = true, 
+                    ValidateLifetime = true, 
+                    ValidateIssuerSigningKey = true, 
+                    
+                    ValidIssuer = jwtSettings.GetSection("validIssuer").Value, 
+                    ValidAudience = jwtSettings.GetSection("validAudience").Value, 
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.GetSection("securityKey").Value)) 
+                }; 
+            });
 
             services.AddControllers();
         }
