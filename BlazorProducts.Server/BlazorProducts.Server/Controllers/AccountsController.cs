@@ -43,7 +43,9 @@ namespace BlazorProducts.Server.Controllers
                 var errors = result.Errors.Select(e => e.Description);
 
                 return BadRequest(new RegistrationResponseDto { Errors = errors }); 
-            } 
+            }
+
+            await _userManager.AddToRoleAsync(user, "Viewer");
             
             return StatusCode(201); 
         }
@@ -57,7 +59,7 @@ namespace BlazorProducts.Server.Controllers
                 return Unauthorized(new AuthResponseDto { ErrorMessage = "Invalid Authentication" });
 
             var signingCredentials = GetSigningCredentials(); 
-            var claims = GetClaims(user); 
+            var claims = await GetClaims(user); 
             var tokenOptions = GenerateTokenOptions(signingCredentials, claims);
             var token = new JwtSecurityTokenHandler().WriteToken(tokenOptions);
 
@@ -72,13 +74,19 @@ namespace BlazorProducts.Server.Controllers
             return new SigningCredentials(secret, SecurityAlgorithms.HmacSha256); 
         }
 
-        private List<Claim> GetClaims(IdentityUser user) 
+        private async Task<List<Claim>> GetClaims(IdentityUser user) 
         { 
             var claims = new List<Claim> 
             { 
                 new Claim(ClaimTypes.Name, user.Email) 
-            }; 
-            
+            };
+
+            var roles = await _userManager.GetRolesAsync(user); 
+            foreach (var role in roles) 
+            { 
+                claims.Add(new Claim(ClaimTypes.Role, role)); 
+            }
+
             return claims; 
         }
 

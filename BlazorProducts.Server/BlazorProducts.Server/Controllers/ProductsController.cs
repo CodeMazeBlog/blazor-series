@@ -11,7 +11,7 @@ namespace BlazorProducts.Server.Controllers
 {
     [Route("api/products")]
     [ApiController]
-    [Authorize]
+    [Authorize(Roles = "Administrator")]
     public class ProductsController : ControllerBase
     {
         private readonly IProductRepository _repo;

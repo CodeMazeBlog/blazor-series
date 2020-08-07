@@ -22,6 +22,7 @@ namespace BlazorProducts.Server.Context
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.ApplyConfiguration(new ProductConfiguration());
+            modelBuilder.ApplyConfiguration(new RoleConfiguration());
         }
 
         public DbSet<Product> Products { get; set; }

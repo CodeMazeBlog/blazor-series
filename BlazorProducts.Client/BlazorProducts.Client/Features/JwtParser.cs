@@ -15,12 +15,38 @@ namespace BlazorProducts.Client.Features
             var payload = jwt.Split('.')[1];
 
             var jsonBytes = ParseBase64WithoutPadding(payload);
-            
+
             var keyValuePairs = JsonSerializer.Deserialize<Dictionary<string, object>>(jsonBytes);
+
+            ExtractRolesFromJWT(claims, keyValuePairs);
 
             claims.AddRange(keyValuePairs.Select(kvp => new Claim(kvp.Key, kvp.Value.ToString())));
 
             return claims;
+        }
+
+        private static void ExtractRolesFromJWT(List<Claim> claims, Dictionary<string, object> keyValuePairs)
+        {
+            keyValuePairs.TryGetValue(ClaimTypes.Role, out object roles);
+
+            if (roles != null)
+            {
+                var parsedRoles = roles.ToString().Trim().Split(',');
+
+                if (parsedRoles.Length > 1)
+                {
+                    foreach (var parsedRole in parsedRoles)
+                    {
+                        claims.Add(new Claim(ClaimTypes.Role, parsedRole));
+                    }
+                }
+                else
+                {
+                    claims.Add(new Claim(ClaimTypes.Role, parsedRoles[0]));
+                }
+
+                keyValuePairs.Remove(ClaimTypes.Role);
+            }
         }
 
         private static byte[] ParseBase64WithoutPadding(string base64)
