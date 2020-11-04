@@ -26,7 +26,7 @@ namespace BlazorProducts.Client.Pages
 
         private async Task Update()
         {
-            await ProductRepo.UpdateProduct(_product, Id);
+            await ProductRepo.UpdateProduct(_product);
             _notification.Show();
         }
 
