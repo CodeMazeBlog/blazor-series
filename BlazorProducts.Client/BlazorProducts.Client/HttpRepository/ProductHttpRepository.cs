@@ -93,18 +93,18 @@ namespace BlazorProducts.Client.HttpRepository
             return product;
         }
 
-        public async Task UpdateProduct(Product product, string id)
+        public async Task UpdateProduct(Product product)
         {
             var content = JsonSerializer.Serialize(product);
             var bodyContent = new StringContent(content, Encoding.UTF8, "application/json");
-            var url = Path.Combine("https://localhost:5011/api/products/", id);
+            var url = Path.Combine("https://localhost:5011/api/products/", product.Id.ToString());
 
-            var postResult = await _client.PutAsync(url, bodyContent);
-            var postContent = await postResult.Content.ReadAsStringAsync();
+            var putResult = await _client.PutAsync(url, bodyContent);
+            var putContent = await putResult.Content.ReadAsStringAsync();
 
-            if (!postResult.IsSuccessStatusCode)
+            if (!putResult.IsSuccessStatusCode)
             {
-                throw new ApplicationException(postContent);
+                throw new ApplicationException(putContent);
             }
         }
 
