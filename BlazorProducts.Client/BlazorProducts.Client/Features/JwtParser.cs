@@ -31,13 +31,13 @@ namespace BlazorProducts.Client.Features
 
             if (roles != null)
             {
-                var parsedRoles = roles.ToString().Trim().Split(',');
+                var parsedRoles = roles.ToString().Trim().TrimStart('[').TrimEnd(']').Split(',');
 
                 if (parsedRoles.Length > 1)
                 {
                     foreach (var parsedRole in parsedRoles)
                     {
-                        claims.Add(new Claim(ClaimTypes.Role, parsedRole));
+                        claims.Add(new Claim(ClaimTypes.Role, parsedRole.Trim('"')));
                     }
                 }
                 else
