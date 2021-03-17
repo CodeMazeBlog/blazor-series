@@ -27,7 +27,7 @@ namespace BlazorProducts.Server.TokenHelpers
 
 		public SigningCredentials GetSigningCredentials()
 		{
-			var key = Encoding.UTF8.GetBytes(_jwtSettings.GetSection("securityKey").Value);
+			var key = Encoding.UTF8.GetBytes(_jwtSettings["securityKey"]);
 			var secret = new SymmetricSecurityKey(key);
 
 			return new SigningCredentials(secret, SecurityAlgorithms.HmacSha256);
@@ -52,10 +52,10 @@ namespace BlazorProducts.Server.TokenHelpers
 		public JwtSecurityToken GenerateTokenOptions(SigningCredentials signingCredentials, List<Claim> claims)
 		{
 			var tokenOptions = new JwtSecurityToken(
-				issuer: _jwtSettings.GetSection("validIssuer").Value,
-				audience: _jwtSettings.GetSection("validAudience").Value,
+				issuer: _jwtSettings["validIssuer"],
+				audience: _jwtSettings["validAudience"],
 				claims: claims,
-				expires: DateTime.Now.AddMinutes(Convert.ToDouble(_jwtSettings.GetSection("expiryInMinutes").Value)),
+				expires: DateTime.Now.AddMinutes(Convert.ToDouble(_jwtSettings["expiryInMinutes"])),
 				signingCredentials: signingCredentials);
 
 			return tokenOptions;
@@ -79,10 +79,10 @@ namespace BlazorProducts.Server.TokenHelpers
 				ValidateIssuer = true,
 				ValidateIssuerSigningKey = true,
 				IssuerSigningKey = new SymmetricSecurityKey(
-					Encoding.UTF8.GetBytes(_jwtSettings.GetSection("securityKey").Value)),
+					Encoding.UTF8.GetBytes(_jwtSettings["securityKey"])),
 				ValidateLifetime = false,
-				ValidIssuer = _jwtSettings.GetSection("validIssuer").Value,
-				ValidAudience = _jwtSettings.GetSection("validAudience").Value,
+				ValidIssuer = _jwtSettings["validIssuer"],
+				ValidAudience = _jwtSettings["validAudience"],
 			};
 
 			var tokenHandler = new JwtSecurityTokenHandler();
