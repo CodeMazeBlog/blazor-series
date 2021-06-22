@@ -1,46 +1,43 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using BlazorProducts.Client.HttpRepository;
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Forms;
 using System;
-using System.Threading.Tasks;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using BlazorProducts.Client.HttpRepository;
-using Tewr.Blazor.FileReader;
+using System.Threading.Tasks;
 
 namespace BlazorProducts.Client.Shared
 {
-    public partial class ImageUpload
-    {
-        private ElementReference _input;
+	public partial class ImageUpload
+	{
+		[Parameter]
+		public string ImgUrl { get; set; }
+		[Parameter]
+		public EventCallback<string> OnChange { get; set; }
+		[Inject]
+		public IProductHttpRepository Repository { get; set; }
 
-        [Parameter]
-        public string ImgUrl { get; set; }
-        [Parameter]
-        public EventCallback<string> OnChange { get; set; }
-        [Inject]
-        public IFileReaderService FileReaderService { get; set; }
-        [Inject]
-        public IProductHttpRepository Repository { get; set; }
-
-
-        private async Task HandleSelected()
-        {
-            foreach (var file in await FileReaderService.CreateReference(_input).EnumerateFilesAsync())
+		private async Task HandleSelected(InputFileChangeEventArgs e)
+		{
+            var imageFiles = e.GetMultipleFiles();
+            foreach (var imageFile in imageFiles)
             {
-                if (file != null)
+                if (imageFile != null)
                 {
-                    var fileInfo = await file.ReadFileInfoAsync();
-                    using (var ms = await file.CreateMemoryStreamAsync(4 * 1024))
+                    var resizedFile = await imageFile.RequestImageFileAsync("image/png", 300, 500);
+
+                    using (var ms = resizedFile.OpenReadStream(resizedFile.Size))
                     {
                         var content = new MultipartFormDataContent();
                         content.Headers.ContentDisposition = new ContentDispositionHeaderValue("form-data");
-                        content.Add(new StreamContent(ms, Convert.ToInt32(ms.Length)), "image", fileInfo.Name);
-
+                        content.Add(new StreamContent(ms, Convert.ToInt32(resizedFile.Size)), "image", imageFile.Name);
                         ImgUrl = await Repository.UploadProductImage(content);
-
                         await OnChange.InvokeAsync(ImgUrl);
                     }
                 }
             }
         }
-    }
+	}
 }
