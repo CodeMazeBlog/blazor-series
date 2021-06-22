@@ -12,15 +12,15 @@ namespace BlazorProducts.Client.Pages
     public partial class CreateProduct
     {
         private Product _product = new Product();
-        private SuccessNotification _notification;
+		private SuccessNotification _notification;
 
-        [Inject]
+		[Inject]
         public IProductHttpRepository ProductRepo { get; set; }
 
         private async Task Create()
         {
             await ProductRepo.CreateProduct(_product);
-            _notification.Show();
-        }
+			_notification.Show();
+		}
     }
 }
