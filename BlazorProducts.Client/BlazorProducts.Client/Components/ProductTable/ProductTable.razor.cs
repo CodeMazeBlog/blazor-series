@@ -9,28 +9,28 @@ using System.Threading.Tasks;
 
 namespace BlazorProducts.Client.Components.ProductTable
 {
-    public partial class ProductTable
+	public partial class ProductTable
     {
         [Parameter]
         public List<Product> Products { get; set; }
         [Parameter]
         public EventCallback<Guid> OnDeleted { get; set; }
-        [Inject]
+        [Inject] 
         public NavigationManager NavigationManager { get; set; }
         [Inject]
         public IJSRuntime Js { get; set; }
 
-        private void RedirectToUpdate(Guid id)
-        {
-            var url = Path.Combine("/updateProduct/", id.ToString());
-            NavigationManager.NavigateTo(url);
+        private void RedirectToUpdate(Guid id) 
+        { 
+            var url = Path.Combine("/updateProduct/", id.ToString()); 
+            NavigationManager.NavigateTo(url); 
         }
 
         private async Task Delete(Guid id)
         {
             var product = Products.FirstOrDefault(p => p.Id.Equals(id));
             var confirmed = await Js.InvokeAsync<bool>("confirm", $"Are you sure you want to delete {product.Name} product?");
-            if(confirmed)
+            if (confirmed)
             {
                 await OnDeleted.InvokeAsync(id);
             }

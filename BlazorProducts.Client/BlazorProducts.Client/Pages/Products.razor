@@ -1,6 +1,5 @@
 ﻿@page "/products"
 @using BlazorProducts.Client.Components.ProductTable
-@using BlazorProducts.Client.Components
 
 <div class="row">
     <div class="col-md-5">
@@ -14,9 +13,7 @@
     </div>
 </div>
 <div class="row">
-    <div class="col">
-        <ProductTable Products="ProductList" OnDeleted="DeleteProduct" />
-    </div>
+    <ProductTable Products="ProductList" OnDeleted="DeleteProduct" />
 </div>
 <div class="row">
     <div class="col">
