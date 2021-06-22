@@ -37,5 +37,6 @@ namespace BlazorProducts.Client.Pages
             ProductList = pagingResponse.Items;
             MetaData = pagingResponse.MetaData;
         }
+
     }
 }

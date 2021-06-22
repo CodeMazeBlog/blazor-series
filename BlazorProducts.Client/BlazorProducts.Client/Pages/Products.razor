@@ -1,6 +1,5 @@
 ﻿@page "/products"
 @using BlazorProducts.Client.Components.ProductTable
-@using BlazorProducts.Client.Components
 
 <div class="row">
     <div class="col-md-10">
@@ -11,9 +10,7 @@
     </div>
 </div>
 <div class="row">
-    <div class="col">
-        <ProductTable Products="ProductList" />
-    </div>
+    <ProductTable Products="ProductList" />
 </div>
 <div class="row">
     <div class="col">
