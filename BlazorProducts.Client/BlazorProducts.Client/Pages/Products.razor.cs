@@ -45,5 +45,6 @@ namespace BlazorProducts.Client.Pages
             _productParameters.SearchTerm = searchTerm;
             await GetProducts();
         }
+
     }
 }

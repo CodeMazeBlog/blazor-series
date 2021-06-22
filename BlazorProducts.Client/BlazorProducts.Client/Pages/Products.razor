@@ -1,22 +1,16 @@
 ﻿@page "/products"
 @using BlazorProducts.Client.Components.ProductTable
-@using BlazorProducts.Client.Components
 
 <div class="row">
-    <div class="col-md-5">
+    <div class="col-md-10">
         <Search OnSearchChanged="SearchChanged"/>
-    </div>
-    <div class="col-md-5">
-        @*Place for sort*@
     </div>
     <div class="col-md-2">
         <a href="/createProduct">Create Product</a>
     </div>
 </div>
 <div class="row">
-    <div class="col">
-        <ProductTable Products="ProductList" />
-    </div>
+    <ProductTable Products="ProductList" />
 </div>
 <div class="row">
     <div class="col">
