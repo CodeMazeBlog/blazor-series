@@ -1,6 +1,5 @@
 ﻿@page "/products"
 @using BlazorProducts.Client.Components.ProductTable
-@using BlazorProducts.Client.Components
 @using Microsoft.AspNetCore.Authorization
 @attribute [Authorize]
 
@@ -16,9 +15,7 @@
     </div>
 </div>
 <div class="row">
-    <div class="col">
-        <ProductTable Products="ProductList" OnDeleted="DeleteProduct" />
-    </div>
+    <ProductTable Products="ProductList" OnDeleted="DeleteProduct" />
 </div>
 <div class="row">
     <div class="col">
