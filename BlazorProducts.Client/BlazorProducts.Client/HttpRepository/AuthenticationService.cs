@@ -3,94 +3,96 @@ using BlazorProducts.Client.AuthProviders;
 using Entities.DTO;
 using Microsoft.AspNetCore.Components.Authorization;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
-using System.Net.Http.Headers;
 
 namespace BlazorProducts.Client.HttpRepository
 {
-	public class AuthenticationService : IAuthenticationService
-	{
-		private readonly HttpClient _client;
-		private readonly AuthenticationStateProvider _authStateProvider;
-		private readonly ILocalStorageService _localStorage;
+    public class AuthenticationService : IAuthenticationService
+    {
+        private readonly HttpClient _client;
+        private readonly JsonSerializerOptions _options;
+        private readonly AuthenticationStateProvider _authStateProvider; 
+        private readonly ILocalStorageService _localStorage;
 
-		public AuthenticationService(HttpClient client, AuthenticationStateProvider authStateProvider, 
-			ILocalStorageService localStorage)
-		{
-			_client = client;
-			_authStateProvider = authStateProvider;
-			_localStorage = localStorage;
-		}
+        public AuthenticationService(HttpClient client, AuthenticationStateProvider authStateProvider, ILocalStorageService localStorage)
+        {
+            _client = client;
+            _options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+            _authStateProvider = authStateProvider; 
+            _localStorage = localStorage;
+        }
 
-		public async Task<RegistrationResponseDto> RegisterUser(UserForRegistrationDto userForRegistration)
-		{
-			var content = JsonSerializer.Serialize(userForRegistration);
-			var bodyContent = new StringContent(content, Encoding.UTF8, "application/json");
+        public async Task<RegistrationResponseDto> RegisterUser(UserForRegistrationDto userForRegistration)
+        {
+            var content = JsonSerializer.Serialize(userForRegistration);
+            var bodyContent = new StringContent(content, Encoding.UTF8, "application/json");
 
-			var registrationResult = await _client.PostAsync("https://localhost:5011/api/accounts/registration", bodyContent);
-			var registrationContent = await registrationResult.Content.ReadAsStringAsync();
+            var registrationResult = await _client.PostAsync("accounts/registration", bodyContent);
+            var registrationContent = await registrationResult.Content.ReadAsStringAsync();
 
-			if (!registrationResult.IsSuccessStatusCode)
-			{
-				var result = JsonSerializer.Deserialize<RegistrationResponseDto>(registrationContent, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-				return result;
-			}
+            if (!registrationResult.IsSuccessStatusCode)
+            {
+                var result = JsonSerializer.Deserialize<RegistrationResponseDto>(registrationContent, _options);
+                return result;
+            }
 
-			return new RegistrationResponseDto { IsSuccessfulRegistration = true };
-		}
+            return new RegistrationResponseDto { IsSuccessfulRegistration = true };
+        }
 
-		public async Task<AuthResponseDto> Login(UserForAuthenticationDto userForAuthentication)
-		{
-			var content = JsonSerializer.Serialize(userForAuthentication);
-			var bodyContent = new StringContent(content, Encoding.UTF8, "application/json");
+        public async Task<AuthResponseDto> Login(UserForAuthenticationDto userForAuthentication)
+        {
+            var content = JsonSerializer.Serialize(userForAuthentication);
+            var bodyContent = new StringContent(content, Encoding.UTF8, "application/json");
 
-			var authResult = await _client.PostAsync("https://localhost:5011/api/accounts/login", bodyContent);
-			var authContent = await authResult.Content.ReadAsStringAsync();
-			var result = JsonSerializer.Deserialize<AuthResponseDto>(authContent, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            var authResult = await _client.PostAsync("accounts/login", bodyContent);
+            var authContent = await authResult.Content.ReadAsStringAsync();
+            var result = JsonSerializer.Deserialize<AuthResponseDto>(authContent, _options);
 
-			if (!authResult.IsSuccessStatusCode)
-				return result;
+            if (!authResult.IsSuccessStatusCode)
+                return result;
 
-			await _localStorage.SetItemAsync("authToken", result.Token);
-			await _localStorage.SetItemAsync("refreshToken", result.RefreshToken);
-			((AuthStateProvider)_authStateProvider).NotifyUserAuthentication(result.Token);
-			_client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", result.Token);
+            await _localStorage.SetItemAsync("authToken", result.Token);
+            await _localStorage.SetItemAsync("refreshToken", result.RefreshToken);
+            ((AuthStateProvider)_authStateProvider).NotifyUserAuthentication(result.Token);
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", result.Token);
+            
+            return new AuthResponseDto { IsAuthSuccessful = true };
+        }
 
-			return new AuthResponseDto { IsAuthSuccessful = true };
-		}
+        public async Task<string> RefreshToken()
+        {
+            var token = await _localStorage.GetItemAsync<string>("authToken");
+            var refreshToken = await _localStorage.GetItemAsync<string>("refreshToken");
 
-		public async Task<string> RefreshToken()
-		{
-			var token = await _localStorage.GetItemAsync<string>("authToken");
-			var refreshToken = await _localStorage.GetItemAsync<string>("refreshToken");
+            var tokenDto = JsonSerializer.Serialize(new RefreshTokenDto { Token = token, RefreshToken = refreshToken });
+            var bodyContent = new StringContent(tokenDto, Encoding.UTF8, "application/json");
 
-			var tokenDto = JsonSerializer.Serialize(new RefreshTokenDto { Token = token, RefreshToken = refreshToken });
-			var bodyContent = new StringContent(tokenDto, Encoding.UTF8, "application/json");
+            var refreshResult = await _client.PostAsync("token/refresh", bodyContent);
+            var refreshContent = await refreshResult.Content.ReadAsStringAsync();
+            var result = JsonSerializer.Deserialize<AuthResponseDto>(refreshContent, _options);
 
-			var refreshResult = await _client.PostAsync("https://localhost:5011/api/token/refresh", bodyContent);
-			var refreshContent = await refreshResult.Content.ReadAsStringAsync();
-			var result = JsonSerializer.Deserialize<AuthResponseDto>(refreshContent, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            if (!refreshResult.IsSuccessStatusCode)
+                throw new ApplicationException("Something went wrong during the refresh token action");
+            
+            await _localStorage.SetItemAsync("authToken", result.Token);
+            await _localStorage.SetItemAsync("refreshToken", result.RefreshToken);
 
-			if (!refreshResult.IsSuccessStatusCode)
-				throw new ApplicationException("Something went wrong during the refresh token action");
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", result.Token);
+            return result.Token;
+        }
 
-			await _localStorage.SetItemAsync("authToken", result.Token);
-			await _localStorage.SetItemAsync("refreshToken", result.RefreshToken);
-			
-			_client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", result.Token);
-
-			return result.Token;
-		}
-
-		public async Task Logout()
-		{
-			await _localStorage.RemoveItemAsync("authToken");
-			await _localStorage.RemoveItemAsync("refreshToken");
-			((AuthStateProvider)_authStateProvider).NotifyUserLogout();
-			_client.DefaultRequestHeaders.Authorization = null;
-		}
-	}
+        public async Task Logout()
+        {
+            await _localStorage.RemoveItemAsync("authToken");
+            await _localStorage.RemoveItemAsync("refreshToken");
+            ((AuthStateProvider)_authStateProvider).NotifyUserLogout();
+            _client.DefaultRequestHeaders.Authorization = null;
+        }
+    }
 }

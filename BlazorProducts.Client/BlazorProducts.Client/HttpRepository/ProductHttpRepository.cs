@@ -2,6 +2,7 @@
 using Entities.Models;
 using Entities.RequestFeatures;
 using Entities.RequestParameters;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.WebUtilities;
 using System;
 using System.Collections.Generic;
@@ -17,10 +18,12 @@ namespace BlazorProducts.Client.HttpRepository
     public class ProductHttpRepository : IProductHttpRepository
     {
         private readonly HttpClient _client;
+        private readonly JsonSerializerOptions _options;
 
         public ProductHttpRepository(HttpClient client)
         {
             _client = client;
+            _options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
         }
 
         public async Task<PagingResponse<Product>> GetProducts(ProductParameters productParameters)
@@ -31,42 +34,39 @@ namespace BlazorProducts.Client.HttpRepository
                 ["searchTerm"] = productParameters.SearchTerm == null ? "" : productParameters.SearchTerm,
                 ["orderBy"] = productParameters.OrderBy
             };
-
-            var response = await _client.GetAsync(QueryHelpers.AddQueryString("https://localhost:5011/api/products", queryStringParam));
+            var response = await _client.GetAsync(QueryHelpers.AddQueryString("products", queryStringParam));
             var content = await response.Content.ReadAsStringAsync();
             if (!response.IsSuccessStatusCode)
             {
                 throw new ApplicationException(content);
             }
-
             var pagingResponse = new PagingResponse<Product>
             {
-                Items = JsonSerializer.Deserialize<List<Product>>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true }),
-                MetaData = JsonSerializer.Deserialize<MetaData>(response.Headers.GetValues("X-Pagination").First(), new JsonSerializerOptions { PropertyNameCaseInsensitive = true})
+                Items = JsonSerializer.Deserialize<List<Product>>(content, _options),
+                MetaData = JsonSerializer.Deserialize<MetaData>(response.Headers.GetValues("X-Pagination").First(), _options)
             };
-            
+
             return pagingResponse;
         }
 
-        public async Task CreateProduct(Product product)
-        {
-            var content = JsonSerializer.Serialize(product);
-            var bodyContent = new StringContent(content, Encoding.UTF8, "application/json");
+        public async Task CreateProduct(Product product) 
+        { 
+            var content = JsonSerializer.Serialize(product); 
+            var bodyContent = new StringContent(content, Encoding.UTF8, "application/json"); 
 
-            var postResult = await _client.PostAsync("https://localhost:5011/api/products", bodyContent);
-            var postContent = await postResult.Content.ReadAsStringAsync();
+            var postResult = await _client.PostAsync("products", bodyContent); 
+            var postContent = await postResult.Content.ReadAsStringAsync(); 
 
-            if(!postResult.IsSuccessStatusCode)
-            {
-                throw new ApplicationException(postContent);
-            }
+            if (!postResult.IsSuccessStatusCode) 
+            { 
+                throw new ApplicationException(postContent); 
+            } 
         }
 
         public async Task<string> UploadProductImage(MultipartFormDataContent content)
         {
-            var postResult = await _client.PostAsync("https://localhost:5011/api/upload", content);
+            var postResult = await _client.PostAsync("upload", content);
             var postContent = await postResult.Content.ReadAsStringAsync();
-
             if (!postResult.IsSuccessStatusCode)
             {
                 throw new ApplicationException(postContent);
@@ -80,7 +80,7 @@ namespace BlazorProducts.Client.HttpRepository
 
         public async Task<Product> GetProduct(string id)
         {
-            var url = Path.Combine("https://localhost:5011/api/products/", id);
+            var url = Path.Combine("products", id);
 
             var response = await _client.GetAsync(url);
             var content = await response.Content.ReadAsStringAsync();
@@ -89,7 +89,7 @@ namespace BlazorProducts.Client.HttpRepository
                 throw new ApplicationException(content);
             }
 
-            var product = JsonSerializer.Deserialize<Product>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            var product = JsonSerializer.Deserialize<Product>(content, _options);
             return product;
         }
 
@@ -97,21 +97,21 @@ namespace BlazorProducts.Client.HttpRepository
         {
             var content = JsonSerializer.Serialize(product);
             var bodyContent = new StringContent(content, Encoding.UTF8, "application/json");
-            var url = Path.Combine("https://localhost:5011/api/products/", product.Id.ToString());
+            var url = Path.Combine("products", product.Id.ToString());
 
-            var putResult = await _client.PutAsync(url, bodyContent);
-            var putContent = await putResult.Content.ReadAsStringAsync();
+            var postResult = await _client.PutAsync(url, bodyContent);
+            var postContent = await postResult.Content.ReadAsStringAsync();
 
-            if (!putResult.IsSuccessStatusCode)
+            if (!postResult.IsSuccessStatusCode)
             {
-                throw new ApplicationException(putContent);
+                throw new ApplicationException(postContent);
             }
         }
 
         public async Task DeleteProduct(Guid id)
         {
-            var url = Path.Combine("https://localhost:5011/api/products", id.ToString());
-            
+            var url = Path.Combine("products", id.ToString());
+
             var deleteResult = await _client.DeleteAsync(url);
             var deleteContent = await deleteResult.Content.ReadAsStringAsync();
 

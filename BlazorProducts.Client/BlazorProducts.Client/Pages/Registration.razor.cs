@@ -16,18 +16,18 @@ namespace BlazorProducts.Client.Pages
         public IAuthenticationService AuthenticationService { get; set; }
         [Inject]
         public NavigationManager NavigationManager { get; set; }
-        public bool ShowRegistrationErrors { get; set; }
+        public bool ShowRegistrationErros { get; set; }
         public IEnumerable<string> Errors { get; set; }
 
         public async Task Register()
         {
-            ShowRegistrationErrors = false;
+            ShowRegistrationErros = false;
 
             var result = await AuthenticationService.RegisterUser(_userForRegistration);
             if(!result.IsSuccessfulRegistration)
             {
                 Errors = result.Errors;
-                ShowRegistrationErrors = true;
+                ShowRegistrationErros = true;
             }
             else
             {

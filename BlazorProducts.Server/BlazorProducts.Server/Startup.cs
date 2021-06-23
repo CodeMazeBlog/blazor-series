@@ -46,7 +46,7 @@ namespace BlazorProducts.Server
 			services.AddIdentity<User, IdentityRole>()
 				.AddEntityFrameworkStores<ProductContext>();
 
-			var jwtSettings = Configuration.GetSection("JWTSettings"); 
+			var jwtSettings = Configuration.GetSection("JwtSettings"); 
 			services.AddAuthentication(opt => 
 			{ 
 				opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme; 
@@ -60,9 +60,9 @@ namespace BlazorProducts.Server
 					ValidateLifetime = true, 
 					ValidateIssuerSigningKey = true, 
 					
-					ValidIssuer = jwtSettings["validIssuer"], 
-					ValidAudience = jwtSettings["validAudience"], 
-					IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["securityKey"])) 
+					ValidIssuer = jwtSettings.GetSection("validIssuer").Value, 
+					ValidAudience = jwtSettings.GetSection("validAudience").Value, 
+					IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.GetSection("securityKey").Value)) 
 				}; 
 			});
 
