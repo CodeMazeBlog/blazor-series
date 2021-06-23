@@ -1,7 +1,8 @@
-﻿<input type="file" @ref="_input" @onchange="HandleSelected" accept=".jpg, .jpeg, png" />
+﻿<InputFile OnChange="@HandleSelected" multiple />
+
 @if (ImgUrl != null)
 {
-<div>
-    <img src="@ImgUrl" style="width:300px" />
-</div>
+    <div>
+        <img src="@ImgUrl" style="width:300px" />
+    </div>
 }

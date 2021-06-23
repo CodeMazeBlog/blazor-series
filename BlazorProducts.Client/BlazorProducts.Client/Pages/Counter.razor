@@ -20,7 +20,7 @@
     [CascadingParameter]
     public Task<AuthenticationState> AuthState { get; set; }
 
-    private async void IncrementCount()
+    private async Task IncrementCount()
     {
         var authState = await AuthState;
         var user = authState.User;
