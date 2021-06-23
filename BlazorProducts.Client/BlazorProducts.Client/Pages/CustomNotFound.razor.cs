@@ -6,15 +6,14 @@ using System.Threading.Tasks;
 
 namespace BlazorProducts.Client.Pages
 {
-    public partial class CustomNotFound
-    {
-        [Inject]
-        public NavigationManager NavigationManager { get; set; }
-
-        public void NavigateToHome()
-        {
-            Console.WriteLine(NavigationManager.Uri);
-            NavigationManager.NavigateTo("/");
-        }
-    }
+	public partial class CustomNotFound
+	{
+		[Inject] 
+		public NavigationManager NavigationManager { get; set; }
+		
+		public void NavigateToHome() 
+		{ 
+			NavigationManager.NavigateTo("/"); 
+		}
+	}
 }
