@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 using BlazorProducts.Server.Repository;
-using Entities.RequestParameters;
+using Entities.RequestFeatures;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 

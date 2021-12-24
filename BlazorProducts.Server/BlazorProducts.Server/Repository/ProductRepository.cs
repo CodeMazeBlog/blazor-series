@@ -2,7 +2,7 @@
 using BlazorProducts.Server.Paging;
 using BlazorProducts.Server.Repository.RepositoryExtensions;
 using Entities.Models;
-using Entities.RequestParameters;
+using Entities.RequestFeatures;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 

@@ -1,4 +1,4 @@
-﻿namespace Entities.RequestParameters
+﻿namespace Entities.RequestFeatures
 {
     public class ProductParameters
     {
