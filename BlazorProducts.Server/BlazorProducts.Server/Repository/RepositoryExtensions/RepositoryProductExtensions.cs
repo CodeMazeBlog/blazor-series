@@ -1,18 +1,16 @@
 ﻿using Entities.Models;
-using System.Linq;
 
-namespace BlazorProducts.Server.Repository.RepositoryExtensions
+namespace BlazorProducts.Server.Repository.RepositoryExtensions;
+
+public static class RepositoryProductExtensions
 {
-    public static class RepositoryProductExtensions
+    public static IQueryable<Product> Search(this IQueryable<Product> products, string searchTerm)
     {
-        public static IQueryable<Product> Search(this IQueryable<Product> products, string searchTerm)
-        {
-            if (string.IsNullOrWhiteSpace(searchTerm))
-                return products;
+        if (string.IsNullOrWhiteSpace(searchTerm))
+            return products;
 
-            var lowerCaseSearchTerm = searchTerm.Trim().ToLower();
+        var lowerCaseSearchTerm = searchTerm.Trim().ToLower();
 
-            return products.Where(p => p.Name.ToLower().Contains(lowerCaseSearchTerm));
-        }
+        return products.Where(p => p.Name.ToLower().Contains(lowerCaseSearchTerm));
     }
 }
