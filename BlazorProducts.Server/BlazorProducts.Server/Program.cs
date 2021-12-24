@@ -1,21 +1,43 @@
-using BlazorProducts.Server.MigrationManager;
-using Microsoft.AspNetCore.Hosting;
+using BlazorProducts.Server.Context;
+using BlazorProducts.Server.Repository;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-namespace BlazorProducts.Server
-{
-    public class Program
-    {
-        public static void Main(string[] args)
-        {
-            CreateHostBuilder(args).Build().MigrateDatabase().Run();
-        }
+var builder = WebApplication.CreateBuilder(args);
 
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(webBuilder =>
-                {
-                    webBuilder.UseStartup<Startup>();
-                });
-    }
-}
+builder.Services.AddCors(policy =>
+{
+    policy.AddPolicy("CorsPolicy", opt => opt
+        .AllowAnyOrigin()
+        .AllowAnyHeader()
+        .AllowAnyMethod()
+        .WithExposedHeaders("X-Pagination"));
+});
+
+builder.Services.AddDbContext<ProductContext>(opt =>
+    opt.UseSqlServer(builder.Configuration.GetConnectionString("sqlConnection")));
+
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
+
+builder.Services.AddControllers();
+
+var app = builder.Build();
+
+if (app.Environment.IsDevelopment())
+    app.UseDeveloperExceptionPage();
+
+
+app.UseHttpsRedirection();
+
+app.UseRouting();
+
+app.UseCors("CorsPolicy");
+
+app.UseAuthorization();
+
+app.MapControllers();
+
+app.Run();
